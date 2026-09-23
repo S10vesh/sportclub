@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: sportclub-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: sportclub
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - sportclub-postgres-data:/var/lib/postgresql/data
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/01-schema.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d sportclub"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    container_name: sportclub-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      SPORTCLUB_DB_URL: jdbc:postgresql://postgres:5432/sportclub
+      SPORTCLUB_DB_USER: postgres
+      SPORTCLUB_DB_PASSWORD: postgres
+    stdin_open: true
+    tty: true
+
+volumes:
+  sportclub-postgres-data:
