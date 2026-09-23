@@ -255,3 +255,109 @@ docker compose down
 
 Важно: Docker PostgreSQL доступен с компьютера на порту 5433.
 Локальный PostgreSQL использует порт 5432.
+
+8. ПОЛНЫЙ СПИСОК КОМАНД ПО ПОРЯДКУ
+====================================
+
+Локальный запуск после перезагрузки компьютера:
+
+1) Открыть PowerShell и перейти в проект:
+
+cd C:\sportclub
+
+2) Проверить службу PostgreSQL:
+
+Get-Service -Name postgresql* | Select-Object Name,Status,StartType
+
+Ожидаемый Status: Running.
+
+3) Проверить порт PostgreSQL:
+
+Test-NetConnection localhost -Port 5432 -InformationLevel Quiet
+
+Ожидаемый результат: True.
+
+4) Указать пароль PostgreSQL в текущем окне PowerShell:
+
+$env:SPORTCLUB_DB_PASSWORD = "ВАШ_РЕАЛЬНЫЙ_ПАРОЛЬ_POSTGRES"
+
+5) Создать базу, таблицы и тестовые записи:
+
+powershell -ExecutionPolicy Bypass -File .\database\setup-local.ps1
+
+Ожидаемый результат:
+
+Done. Database sportclub and tables are initialized.
+
+6) Запустить проект через полный путь к Maven:
+
+& "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
+
+Если команда mvn работает в новом PowerShell, можно использовать короткую
+команду:
+
+mvn clean compile exec:java
+
+Альтернативный запуск через готовый PowerShell-скрипт:
+
+powershell -ExecutionPolicy Bypass -File .\run.ps1
+
+7) Проверить меню приложения:
+
+1    открыть меню участников
+2    показать всех участников
+0    вернуться из подменю
+2    открыть записи на тренировки
+2    показать все записи
+0    вернуться из подменю
+5    показать статистику
+6    создать Excel-файл
+0    выйти из приложения
+
+Excel-файл создается по адресу:
+
+exports\sport-club-data.xlsx
+
+Проверка Docker после включения виртуализации и перезагрузки:
+
+1) Проверить WSL:
+
+wsl --status
+wsl --list --verbose
+
+2) Добавить Docker CLI в текущее окно PowerShell, если команда docker не найдена:
+
+$env:Path = "$env:LOCALAPPDATA\Programs\DockerDesktop\resources\bin;$env:Path"
+
+3) Проверить Docker:
+
+docker version
+docker compose version
+
+В docker version должны присутствовать разделы Client и Server.
+
+4) Запустить проект в Docker с чистой базой:
+
+cd C:\sportclub
+docker compose down -v
+docker compose up --build
+
+5) Проверить контейнеры в другом PowerShell:
+
+docker compose ps
+docker ps
+
+6) Остановить контейнеры:
+
+docker compose down
+
+Важно:
+- локальный PostgreSQL использует localhost:5432;
+- Docker PostgreSQL доступен с компьютера на localhost:5433;
+- внутри Docker приложение подключается к postgres:5432;
+- docker compose down -v удаляет Docker volume и базу Docker;
+- для локальной базы команда down -v ничего не делает.
+
+$env:SPORTCLUB_DB_PASSWORD = "ТВОЙ_ПАРОЛЬ_POSTGRES"
+Get-Service -Name postgresql*
+& "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
