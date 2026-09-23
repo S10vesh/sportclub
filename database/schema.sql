@@ -20,6 +20,9 @@ CREATE TABLE IF NOT EXISTS training_registrations (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE UNIQUE INDEX IF NOT EXISTS uq_registration_member_slot
+    ON training_registrations (member_id, training_date, start_time);
+
 INSERT INTO members (full_name, phone, email, membership_type) VALUES
 ('Иванов Иван', '+79990000001', 'ivanov@example.com', 'PREMIUM'),
 ('Петрова Анна', '+79990000002', 'petrova@example.com', 'ANNUAL'),

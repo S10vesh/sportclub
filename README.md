@@ -12,14 +12,25 @@
 
 ## Запуск через Docker
 
+Для Docker Desktop на Windows должны быть включены WSL2 и Virtual Machine
+Platform. Если Docker Engine отвечает ошибкой HTTP 500, выполните:
+
+```powershell
+wsl --install
+```
+
+После установки обязательно перезагрузите компьютер, затем запустите Docker
+Desktop и дождитесь статуса `Docker Desktop is running`.
+
 Запустить PostgreSQL и консольное приложение:
 
 ```bash
 docker compose up --build
 ```
 
-PostgreSQL будет доступен на `localhost:5432`. Скрипт `database/schema.sql`
-выполнится автоматически при первом создании Docker volume.
+PostgreSQL будет доступен с компьютера на `localhost:5433`. Внутри Docker-сети
+приложение подключается к PostgreSQL по адресу `postgres:5432`. Скрипт
+`database/schema.sql` выполнится автоматически при первом создании Docker volume.
 
 Для полной повторной инициализации базы:
 
@@ -34,6 +45,19 @@ docker compose up --build
 docker compose up -d postgres
 mvn clean compile exec:java
 ```
+
+Если Docker еще не установлен, PostgreSQL можно использовать как Windows-службу.
+В текущем окружении PostgreSQL уже запущен и слушает `localhost:5432`. Создать
+базу и загрузить таблицы/тестовые данные можно так:
+
+```powershell
+.\database\setup-local.ps1
+mvn clean compile exec:java
+```
+
+Скрипт может запросить пароль пользователя `postgres`. Само приложение не
+требует открытия pgAdmin: оно подключается к работающей службе PostgreSQL по
+JDBC.
 
 ## Быстрый запуск
 
@@ -54,6 +78,17 @@ SPORTCLUB_DB_PASSWORD=postgres
 ```
 
 Значения по умолчанию уже рассчитаны на локальный PostgreSQL с пользователем `postgres` и паролем `postgres`.
+
+Если PostgreSQL сообщает `password authentication failed for user "postgres"`,
+укажите фактический пароль в текущем PowerShell перед запуском приложения:
+
+```powershell
+$env:SPORTCLUB_DB_PASSWORD = "ВАШ_ПАРОЛЬ_POSTGRES"
+mvn clean compile exec:java
+```
+
+Переменная действует только в текущем окне PowerShell. Пароль не нужно записывать
+в исходный код или коммитить в проект.
 
 4. Запустите приложение:
 

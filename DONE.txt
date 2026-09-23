@@ -1,0 +1,257 @@
+ИТОГ ПРОЕКТА SPORT CLUB
+========================
+
+Дата: 24.09.2026
+Предметная область: спортивный клуб
+Основная сущность: запись участника на тренировку
+
+1. ЧТО СДЕЛАНО
+===============
+
+Проект реализован на Java 17.
+
+Архитектура:
+Console UI -> Service -> Repository/JDBC -> PostgreSQL
+
+В проекте есть:
+
+- Maven-проект и pom.xml.
+- PostgreSQL как основная база данных.
+- JDBC-подключение через Connection.
+- PreparedStatement для SQL-запросов.
+- ResultSet и try-with-resources.
+- Две связанные сущности:
+  1) Member - участник клуба;
+  2) TrainingRegistration - запись на тренировку.
+- Связь training_registrations.member_id -> members.id.
+- Интерактивное консольное меню.
+- Циклические подменю: после операции программа не завершается.
+- CRUD для записей на тренировки:
+  создание, просмотр всех записей, поиск по ID, изменение и удаление.
+- CRUD для участников.
+- Поиск по названию тренировки.
+- Поиск по тренеру.
+- Фильтрация по статусу.
+- Фильтрация по категории.
+- Сортировка по дате и времени.
+- Сортировка по длительности.
+- Статистика системы.
+- Экспорт участников и записей в Excel XLSX.
+- Enum MembershipType.
+- Enum RegistrationStatus.
+- Интерфейс CrudRepository.
+- Полиморфизм через CrudRepository<Member>.
+- Инкапсуляция: private-поля, конструкторы и методы.
+- Собственные исключения:
+  BusinessException, EntityNotFoundException, DataAccessException.
+- Обработка неправильного ID и SQL/JDBC-ошибок.
+- Обработка бизнес-ошибок без аварийного завершения программы.
+- Бизнес-правила в Service-слое.
+- SQL-ограничения PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE и CHECK.
+- Уникальность записи участника на дату и время.
+- 5 участников и 10 тестовых записей.
+- Несколько статусов и категорий тренировок.
+- SQL-скрипт database/schema.sql.
+- ER-диаграмма docs/ER-diagram.md.
+- Dockerfile.
+- docker-compose.yml.
+- Инструкция README.md.
+- Подробное описание файлов PROJECT_EXPLANATION.txt.
+- Скрипт database/setup-local.ps1 для локального PostgreSQL.
+
+Проверено:
+
+- Java-проект успешно компилируется через Apache Maven.
+- Ошибок диагностики VS Code нет.
+- PostgreSQL-служба Windows установлена и запускалась.
+- Порт локального PostgreSQL: 5432.
+- Ошибка кодировки schema.sql исправлена через PGCLIENTENCODING=UTF8.
+- Ошибка неправильной команды mvn исправлена установкой Apache Maven.
+
+2. ЧТО НЕ СДЕЛАНО ИЛИ НЕ ПРОВЕРЕНО
+===================================
+
+1) Docker Engine пока не запускается.
+
+Docker Desktop и Docker CLI установлены, но WSL2 сообщает, что аппаратная
+виртуализация отключена:
+
+VirtualizationFirmwareEnabled: False
+
+Поэтому команда docker version показывает Client, но не показывает Server.
+Docker Compose пока не прошел полный запуск контейнеров.
+
+2) Автоматических JUnit-тестов в проекте нет.
+Для требований КР 1 это не является обязательным пунктом, но тесты можно
+добавить отдельно.
+
+3) Excel-экспорт проверен компиляцией и кодом, но полноценный экспорт нужно
+проверить после успешного подключения к базе и запуска пункта меню 6.
+
+3. ЧТО НУЖНО СДЕЛАТЬ ДЛЯ ЛОКАЛЬНОГО ЗАПУСКА
+=============================================
+
+Docker для локального запуска пока не нужен.
+PostgreSQL уже установлен как Windows-служба.
+
+Открыть новый PowerShell и выполнить из C:\sportclub:
+
+1. Перейти в проект:
+
+cd C:\sportclub
+
+2. Указать настоящий пароль пользователя postgres:
+
+$env:SPORTCLUB_DB_PASSWORD = "ВАШ_ПАРОЛЬ_POSTGRES"
+
+3. Создать базу и загрузить таблицы с тестовыми данными:
+
+powershell -ExecutionPolicy Bypass -File .\database\setup-local.ps1
+
+Ожидаемый результат в конце:
+
+Done. Database sportclub and tables are initialized.
+
+4. Запустить приложение:
+
+& "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
+
+Или:
+
+powershell -ExecutionPolicy Bypass -File .\run.ps1
+
+После запуска появится главное меню спортивного клуба.
+
+4. КАК ПРОВЕРИТЬ ПРИЛОЖЕНИЕ
+============================
+
+Главное меню:
+
+1. Участники
+2. Записи на тренировки
+3. Поиск
+4. Фильтрация и сортировка
+5. Статистика
+6. Экспорт в Excel
+7. Вывести таблицы базы данных
+0. Выход
+
+Для проверки участников:
+
+1 -> 2
+
+Появится список участников. Затем в меню участников ввести 0, чтобы вернуться
+в главное меню.
+
+Для проверки записей:
+
+2 -> 2
+
+Должны появиться 10 тестовых записей.
+
+Для проверки поиска:
+
+3 -> 1
+
+Ввести, например: Йога
+
+Для проверки статистики:
+
+5
+
+Для проверки Excel:
+
+6
+
+Файл будет создан здесь:
+
+exports\sport-club-data.xlsx
+
+5. ЧТО НУЖНО СДЕЛАТЬ ДЛЯ DOCKER
+================================
+
+1) Включить аппаратную виртуализацию в BIOS/UEFI.
+
+Для Intel настройка обычно называется:
+
+Intel Virtualization Technology
+Intel VT-x
+Virtualization Technology
+
+2) Загрузить Windows после сохранения настроек BIOS.
+
+3) Запустить Docker Desktop.
+
+4) Проверить Docker:
+
+docker version
+
+В результате должны отображаться разделы Client и Server.
+
+5) Из C:\sportclub запустить:
+
+docker compose down -v
+docker compose up --build
+
+Docker PostgreSQL работает внутри Docker-сети на postgres:5432.
+С компьютера он доступен на localhost:5433, потому что локальный PostgreSQL
+использует порт 5432.
+
+6. КАК ОБЪЯСНИТЬ ПРЕПОДАВАТЕЛЮ
+================================
+
+Программа хранит данные не в памяти Java, а в PostgreSQL.
+
+ConsoleApplication отвечает за меню и ввод.
+Service-классы содержат бизнес-правила.
+Repository-классы выполняют JDBC-запросы.
+Model-классы описывают предметную область.
+DatabaseManager создает подключения к PostgreSQL.
+ExcelExporter экспортирует данные в XLSX.
+
+Основная связь базы:
+
+training_registrations.member_id -> members.id
+
+Приложение демонстрирует ООП, коллекции, Stream API, enum, интерфейс,
+полиморфизм, исключения, JDBC, PostgreSQL и многослойную архитектуру.
+
+7. КОРОТКАЯ ИНСТРУКЦИЯ ЗАПУСКА
+===============================
+
+Вариант A: локальный PostgreSQL без Docker
+
+Открыть PowerShell и выполнить:
+
+cd C:\sportclub
+$env:SPORTCLUB_DB_PASSWORD = "ВАШ_ПАРОЛЬ_POSTGRES"
+powershell -ExecutionPolicy Bypass -File .\database\setup-local.ps1
+& "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
+
+После запуска появится меню спортивного клуба.
+
+Если Maven уже добавлен в PATH, последнюю команду можно заменить на:
+
+mvn clean compile exec:java
+
+Вариант B: запуск через Docker
+
+Сначала включить виртуализацию в BIOS/UEFI и запустить Docker Desktop.
+Проверить Docker:
+
+docker version
+
+В выводе должны быть разделы Client и Server.
+
+Затем выполнить:
+
+cd C:\sportclub
+docker compose down -v
+docker compose up --build
+
+Для остановки контейнеров нажать Ctrl+C или выполнить:
+
+docker compose down
+
+Важно: Docker PostgreSQL доступен с компьютера на порту 5433.
+Локальный PostgreSQL использует порт 5432.

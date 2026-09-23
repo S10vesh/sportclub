@@ -106,11 +106,11 @@ public class TrainingRegistrationService {
     }
 
     private void validateStatusTransition(RegistrationStatus current, RegistrationStatus requested) {
-        if (current == RegistrationStatus.COMPLETED && requested != RegistrationStatus.COMPLETED) {
-            throw new BusinessException("Из завершенной записи нельзя перейти в другой статус");
+        if (current == RegistrationStatus.COMPLETED) {
+            throw new BusinessException("Завершенную запись нельзя редактировать");
         }
-        if (current == RegistrationStatus.CANCELLED && requested != RegistrationStatus.CANCELLED) {
-            throw new BusinessException("Из отмененной записи нельзя перейти в другой статус");
+        if (current == RegistrationStatus.CANCELLED) {
+            throw new BusinessException("Отмененную запись нельзя редактировать");
         }
         if (requested == RegistrationStatus.COMPLETED && current != RegistrationStatus.CONFIRMED) {
             throw new BusinessException("Завершить можно только подтвержденную запись");

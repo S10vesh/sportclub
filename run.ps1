@@ -1,5 +1,6 @@
 $candidates = @(
     "$env:MAVEN_HOME\bin\mvn.cmd",
+    "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd",
     "$env:TEMP\apache-maven-3.9.11\bin\mvn.cmd",
     "C:\Program Files\Apache Maven\bin\mvn.cmd"
 )

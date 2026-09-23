@@ -30,6 +30,9 @@ public class ConsoleApplication {
         while (running) {
             printMainMenu();
             try {
+                if (!scanner.hasNextLine()) {
+                    break;
+                }
                 switch (scanner.nextLine().trim()) {
                     case "1" -> membersMenu();
                     case "2" -> registrationsMenu();
@@ -64,31 +67,45 @@ public class ConsoleApplication {
     }
 
     private void membersMenu() {
-        System.out.println("\n1. Добавить участника  2. Все участники  3. Найти по ID  4. Изменить активность  5. Удалить  0. Назад");
-        switch (scanner.nextLine().trim()) {
-            case "1" -> memberService.create(new Member(input("ФИО: "), input("Телефон: "), input("Email: "), membershipType()));
-            case "2" -> printMembers(memberService.findAll());
-            case "3" -> System.out.println(memberService.findById(inputLong("ID: ")));
-            case "4" -> {
-                Member member = memberService.findById(inputLong("ID: "));
-                member.setActive(!member.isActive());
-                memberService.update(member);
-                System.out.println("Статус участника изменен.");
+        while (true) {
+            System.out.println("\n===== УЧАСТНИКИ =====");
+            System.out.println("1. Добавить участника  2. Все участники  3. Найти по ID  4. Изменить активность  5. Удалить  0. Назад");
+            if (!scanner.hasNextLine()) {
+                return;
             }
-            case "5" -> memberService.delete(inputLong("ID: "));
-            default -> { }
+            switch (scanner.nextLine().trim()) {
+                case "1" -> memberService.create(new Member(input("ФИО: "), input("Телефон: "), input("Email: "), membershipType()));
+                case "2" -> printMembers(memberService.findAll());
+                case "3" -> System.out.println(memberService.findById(inputLong("ID: ")));
+                case "4" -> {
+                    Member member = memberService.findById(inputLong("ID: "));
+                    member.setActive(!member.isActive());
+                    memberService.update(member);
+                    System.out.println("Статус участника изменен.");
+                }
+                case "5" -> memberService.delete(inputLong("ID: "));
+                case "0" -> { return; }
+                default -> System.out.println("Неизвестный пункт меню.");
+            }
         }
     }
 
     private void registrationsMenu() {
-        System.out.println("\n1. Создать запись  2. Все записи  3. По ID  4. Изменить запись  5. Удалить  0. Назад");
-        switch (scanner.nextLine().trim()) {
-            case "1" -> registrationService.create(newRegistration());
-            case "2" -> printRegistrations(registrationService.findAll());
-            case "3" -> System.out.println(registrationService.findById(inputLong("ID: ")));
-            case "4" -> updateRegistration();
-            case "5" -> registrationService.delete(inputLong("ID: "));
-            default -> { }
+        while (true) {
+            System.out.println("\n===== ЗАПИСИ НА ТРЕНИРОВКИ =====");
+            System.out.println("1. Создать запись  2. Все записи  3. По ID  4. Изменить запись  5. Удалить  0. Назад");
+            if (!scanner.hasNextLine()) {
+                return;
+            }
+            switch (scanner.nextLine().trim()) {
+                case "1" -> registrationService.create(newRegistration());
+                case "2" -> printRegistrations(registrationService.findAll());
+                case "3" -> System.out.println(registrationService.findById(inputLong("ID: ")));
+                case "4" -> updateRegistration();
+                case "5" -> registrationService.delete(inputLong("ID: "));
+                case "0" -> { return; }
+                default -> System.out.println("Неизвестный пункт меню.");
+            }
         }
     }
 
