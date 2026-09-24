@@ -1,6 +1,12 @@
 package ru.sportclub.model;
 
 public class Member {
+    public enum MembershipType {
+        BASIC,
+        PREMIUM,
+        ANNUAL
+    }
+
     private long id;
     private String fullName;
     private String phone;

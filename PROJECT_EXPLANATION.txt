@@ -56,19 +56,15 @@ src/main/java/ru/sportclub/Main.java
 Точка входа. Создает DatabaseManager, репозитории, сервисы и ConsoleApplication.
 Вся логика не находится в Main.
 
-src/main/java/ru/sportclub/model/MembershipType.java
-Enum типов абонемента: BASIC, PREMIUM, ANNUAL.
-
-src/main/java/ru/sportclub/model/RegistrationStatus.java
-Enum статусов записи: PLANNED, CONFIRMED, COMPLETED, CANCELLED.
-
 src/main/java/ru/sportclub/model/Member.java
 Модель участника клуба. Содержит private-поля, конструкторы, getters/setters
 и строковое представление объекта.
+Вложенный public enum MembershipType: BASIC, PREMIUM, ANNUAL.
 
 src/main/java/ru/sportclub/model/TrainingRegistration.java
 Модель записи на тренировку. Содержит участника, название тренировки, тренера,
 дату, время, продолжительность, статус и категорию.
+Вложенный public enum RegistrationStatus: PLANNED, CONFIRMED, COMPLETED, CANCELLED.
 
 src/main/java/ru/sportclub/repository/CrudRepository.java
 Общий интерфейс CRUD: save, findAll, findById, update, deleteById.

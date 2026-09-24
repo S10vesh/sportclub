@@ -5,6 +5,13 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 public class TrainingRegistration {
+    public enum RegistrationStatus {
+        PLANNED,
+        CONFIRMED,
+        COMPLETED,
+        CANCELLED
+    }
+
     private long id;
     private long memberId;
     private String memberName;

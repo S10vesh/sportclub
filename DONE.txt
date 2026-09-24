@@ -361,3 +361,8 @@ docker compose down
 $env:SPORTCLUB_DB_PASSWORD = "ТВОЙ_ПАРОЛЬ_POSTGRES"
 Get-Service -Name postgresql*
 & "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
+
+cd C:\sportclub
+docker compose build app
+docker compose up -d postgres
+docker compose run --rm app

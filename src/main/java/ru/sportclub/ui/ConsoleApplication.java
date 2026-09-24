@@ -4,6 +4,8 @@ import ru.sportclub.exception.BusinessException;
 import ru.sportclub.exception.DataAccessException;
 import ru.sportclub.exception.EntityNotFoundException;
 import ru.sportclub.model.*;
+import ru.sportclub.model.Member.MembershipType;
+import ru.sportclub.model.TrainingRegistration.RegistrationStatus;
 import ru.sportclub.service.*;
 import ru.sportclub.util.ExcelExporter;
 
@@ -148,8 +150,9 @@ public class ConsoleApplication {
     private void printStatistics() {
         List<TrainingRegistration> all = registrationService.findAll();
         Map<String, Long> byStatus = registrationService.statistics();
-        long activeMembers = memberService.findAll().stream().filter(Member::isActive).count();
-        System.out.println("Всего участников: " + memberService.findAll().size());
+        List<Member> members = memberService.findAll();
+        long activeMembers = members.stream().filter(Member::isActive).count();
+        System.out.println("Всего участников: " + members.size());
         System.out.println("Активных участников: " + activeMembers);
         System.out.println("Всего записей: " + all.size());
         System.out.println("Подтвержденных: " + byStatus.getOrDefault("CONFIRMED", 0L));

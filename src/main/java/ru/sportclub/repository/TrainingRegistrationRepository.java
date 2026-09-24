@@ -1,7 +1,7 @@
 package ru.sportclub.repository;
 
 import ru.sportclub.exception.DataAccessException;
-import ru.sportclub.model.RegistrationStatus;
+import ru.sportclub.model.TrainingRegistration.RegistrationStatus;
 import ru.sportclub.model.TrainingRegistration;
 import ru.sportclub.util.DatabaseManager;
 

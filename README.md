@@ -120,6 +120,9 @@ Excel-файл сохраняется в `exports/sport-club-data.xlsx` и со�
 `Console UI -> Service -> Repository/JDBC -> PostgreSQL`
 
 - `model` содержит предметные классы и перечисления.
+- Перечисления вложены в свои модели: `Member.MembershipType` и
+  `TrainingRegistration.RegistrationStatus`. Java-исходников — 14 вместо 16;
+  при использовании моделей из другого кода нужны новые импорты этих типов.
 - `repository` содержит интерфейс CRUD и JDBC-реализации.
 - `service` содержит бизнес-правила, поиск, фильтрацию, сортировку и статистику.
 - `util` содержит подключение к БД и экспорт в Excel.

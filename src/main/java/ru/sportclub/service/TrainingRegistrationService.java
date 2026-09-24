@@ -2,7 +2,7 @@ package ru.sportclub.service;
 
 import ru.sportclub.exception.BusinessException;
 import ru.sportclub.exception.EntityNotFoundException;
-import ru.sportclub.model.RegistrationStatus;
+import ru.sportclub.model.TrainingRegistration.RegistrationStatus;
 import ru.sportclub.model.TrainingRegistration;
 import ru.sportclub.repository.MemberRepository;
 import ru.sportclub.repository.TrainingRegistrationRepository;

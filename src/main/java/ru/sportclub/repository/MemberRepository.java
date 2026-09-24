@@ -2,7 +2,7 @@ package ru.sportclub.repository;
 
 import ru.sportclub.exception.DataAccessException;
 import ru.sportclub.model.Member;
-import ru.sportclub.model.MembershipType;
+import ru.sportclub.model.Member.MembershipType;
 import ru.sportclub.util.DatabaseManager;
 
 import java.sql.*;
@@ -21,11 +21,7 @@ public class MemberRepository implements CrudRepository<Member> {
     public Member save(Member member) {
         String sql = "INSERT INTO members(full_name, phone, email, membership_type, active) VALUES (?, ?, ?, ?, ?) RETURNING id";
         try (Connection connection = database.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, member.getFullName());
-            statement.setString(2, member.getPhone());
-            statement.setString(3, member.getEmail());
-            statement.setString(4, member.getMembershipType().name());
-            statement.setBoolean(5, member.isActive());
+            fill(statement, member);
             try (ResultSet result = statement.executeQuery()) {
                 result.next();
                 member.setId(result.getLong(1));
@@ -72,11 +68,7 @@ public class MemberRepository implements CrudRepository<Member> {
     public Member update(Member member) {
         String sql = "UPDATE members SET full_name = ?, phone = ?, email = ?, membership_type = ?, active = ? WHERE id = ?";
         try (Connection connection = database.getConnection(); PreparedStatement statement = connection.prepareStatement(sql)) {
-            statement.setString(1, member.getFullName());
-            statement.setString(2, member.getPhone());
-            statement.setString(3, member.getEmail());
-            statement.setString(4, member.getMembershipType().name());
-            statement.setBoolean(5, member.isActive());
+            fill(statement, member);
             statement.setLong(6, member.getId());
             statement.executeUpdate();
             return member;
@@ -94,6 +86,14 @@ public class MemberRepository implements CrudRepository<Member> {
         } catch (SQLException exception) {
             throw new DataAccessException("Не удалось удалить участника", exception);
         }
+    }
+
+    private void fill(PreparedStatement statement, Member member) throws SQLException {
+        statement.setString(1, member.getFullName());
+        statement.setString(2, member.getPhone());
+        statement.setString(3, member.getEmail());
+        statement.setString(4, member.getMembershipType().name());
+        statement.setBoolean(5, member.isActive());
     }
 
     private Member map(ResultSet result) throws SQLException {
