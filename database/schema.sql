@@ -50,3 +50,4 @@ JOIN (VALUES
 ) AS v(email, training_name, trainer_name, training_date, start_time, duration_minutes, status, category)
 ON m.email = v.email
 WHERE NOT EXISTS (SELECT 1 FROM training_registrations);
+

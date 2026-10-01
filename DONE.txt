@@ -1,129 +1,289 @@
-ИТОГ ПРОЕКТА SPORT CLUB
-========================
+ИТОГ И ТЕХНИЧЕСКОЕ ОПИСАНИЕ ПРОЕКТА SPORT CLUB
+================================================
 
 Дата: 24.09.2026
 Предметная область: спортивный клуб
 Основная сущность: запись участника на тренировку
+Связанная сущность: участник клуба
 
-1. ЧТО СДЕЛАНО
-===============
+1. НАЗНАЧЕНИЕ ПРОЕКТА
+======================
 
-Проект реализован на Java 17.
+Sport Club - консольная информационная система спортивного клуба.
+Пользователь работает с участниками клуба и записями на тренировки через
+интерактивное меню. Основные данные хранятся в PostgreSQL.
 
-Архитектура:
-Console UI -> Service -> Repository/JDBC -> PostgreSQL
+Архитектура приложения:
 
-В проекте есть:
+Console UI -> Service -> Repository / JDBC -> PostgreSQL
 
-- Maven-проект и pom.xml.
-- PostgreSQL как основная база данных.
-- JDBC-подключение через Connection.
-- PreparedStatement для SQL-запросов.
-- ResultSet и try-with-resources.
-- Две связанные сущности:
-  1) Member - участник клуба;
-  2) TrainingRegistration - запись на тренировку.
-- Связь training_registrations.member_id -> members.id.
-- Интерактивное консольное меню.
-- Циклические подменю: после операции программа не завершается.
-- CRUD для записей на тренировки:
-  создание, просмотр всех записей, поиск по ID, изменение и удаление.
-- CRUD для участников.
-- Поиск по названию тренировки.
-- Поиск по тренеру.
-- Фильтрация по статусу.
-- Фильтрация по категории.
-- Сортировка по дате и времени.
-- Сортировка по длительности.
-- Статистика системы.
-- Экспорт участников и записей в Excel XLSX.
-- Enum MembershipType.
-- Enum RegistrationStatus.
-- Интерфейс CrudRepository.
-- Полиморфизм через CrudRepository<Member>.
-- Инкапсуляция: private-поля, конструкторы и методы.
-- Собственные исключения:
-  BusinessException, EntityNotFoundException, DataAccessException.
-- Обработка неправильного ID и SQL/JDBC-ошибок.
-- Обработка бизнес-ошибок без аварийного завершения программы.
-- Бизнес-правила в Service-слое.
-- SQL-ограничения PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE и CHECK.
-- Уникальность записи участника на дату и время.
-- 5 участников и 10 тестовых записей.
-- Несколько статусов и категорий тренировок.
-- SQL-скрипт database/schema.sql.
-- ER-диаграмма docs/ER-diagram.md.
-- Dockerfile.
-- docker-compose.yml.
-- Инструкция README.md.
-- Подробное описание файлов PROJECT_EXPLANATION.txt.
-- Скрипт database/setup-local.ps1 для локального PostgreSQL.
+Роли слоев:
 
-Проверено:
+- Console UI принимает команды и данные пользователя, показывает меню и результат.
+- Service содержит бизнес-правила, поиск, фильтрацию, сортировку и статистику.
+- Repository выполняет SQL-запросы и преобразует строки ResultSet в объекты Java.
+- Database хранит данные, связи и ограничения целостности.
+- Util содержит подключение к PostgreSQL и экспорт в Excel.
+- Exception содержит собственные исключения приложения.
 
-- Java-проект успешно компилируется через Apache Maven.
-- Ошибок диагностики VS Code нет.
-- PostgreSQL-служба Windows установлена и запускалась.
-- Порт локального PostgreSQL: 5432.
-- Ошибка кодировки schema.sql исправлена через PGCLIENTENCODING=UTF8.
-- Ошибка неправильной команды mvn исправлена установкой Apache Maven.
+Проект реализован на Java 17, собирается Maven и запускается локально или через
+Docker Compose.
 
-2. ЧТО НЕ СДЕЛАНО ИЛИ НЕ ПРОВЕРЕНО
-===================================
+2. СТРУКТУРА ПРОЕКТА
+====================
 
-1) Docker Engine пока не запускается.
+sportclub/
+|
+|-- pom.xml
+|-- README.md
+|-- PROJECT_EXPLANATION.txt
+|-- DONE.txt
+|-- Dockerfile
+|-- docker-compose.yml
+|-- run.ps1
+|
+|-- database/
+|   |-- schema.sql
+|   `-- setup-local.ps1
+|
+|-- docs/
+|   `-- ER-diagram.md
+|
+`-- src/main/java/ru/sportclub/
+    |-- Main.java
+    |-- model/
+    |   |-- Member.java
+    |   `-- TrainingRegistration.java
+    |-- repository/
+    |   |-- CrudRepository.java
+    |   |-- MemberRepository.java
+    |   `-- TrainingRegistrationRepository.java
+    |-- service/
+    |   |-- MemberService.java
+    |   `-- TrainingRegistrationService.java
+    |-- exception/
+    |   |-- BusinessException.java
+    |   |-- DataAccessException.java
+    |   `-- EntityNotFoundException.java
+    |-- ui/
+    |   `-- ConsoleApplication.java
+    `-- util/
+        |-- DatabaseManager.java
+        `-- ExcelExporter.java
 
-Docker Desktop и Docker CLI установлены, но WSL2 сообщает, что аппаратная
-виртуализация отключена:
+target/ содержит результаты сборки Maven и не является исходным кодом проекта.
 
-VirtualizationFirmwareEnabled: False
-
-Поэтому команда docker version показывает Client, но не показывает Server.
-Docker Compose пока не прошел полный запуск контейнеров.
-
-2) Автоматических JUnit-тестов в проекте нет.
-Для требований КР 1 это не является обязательным пунктом, но тесты можно
-добавить отдельно.
-
-3) Excel-экспорт проверен компиляцией и кодом, но полноценный экспорт нужно
-проверить после успешного подключения к базе и запуска пункта меню 6.
-
-3. ЧТО НУЖНО СДЕЛАТЬ ДЛЯ ЛОКАЛЬНОГО ЗАПУСКА
-=============================================
-
-Docker для локального запуска пока не нужен.
-PostgreSQL уже установлен как Windows-служба.
-
-Открыть новый PowerShell и выполнить из C:\sportclub:
-
-1. Перейти в проект:
-
-cd C:\sportclub
-
-2. Указать настоящий пароль пользователя postgres:
-
-$env:SPORTCLUB_DB_PASSWORD = "ВАШ_ПАРОЛЬ_POSTGRES"
-
-3. Создать базу и загрузить таблицы с тестовыми данными:
-
-powershell -ExecutionPolicy Bypass -File .\database\setup-local.ps1
-
-Ожидаемый результат в конце:
-
-Done. Database sportclub and tables are initialized.
-
-4. Запустить приложение:
-
-& "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
-
-Или:
-
-powershell -ExecutionPolicy Bypass -File .\run.ps1
-
-После запуска появится главное меню спортивного клуба.
-
-4. КАК ПРОВЕРИТЬ ПРИЛОЖЕНИЕ
+3. НАЗНАЧЕНИЕ КАЖДОГО ФАЙЛА
 ============================
+
+Корневые файлы
+--------------
+
+pom.xml
+Maven-конфигурация. Указывает Java 17, PostgreSQL JDBC-драйвер, Apache POI для
+создания XLSX и exec-maven-plugin для запуска ru.sportclub.Main.
+
+README.md
+Краткая инструкция по локальному и Docker-запуску, архитектура, переменные
+окружения и список бизнес-правил.
+
+PROJECT_EXPLANATION.txt
+Расширенное описание проекта и чек-лист соответствия требованиям КР1.
+
+DONE.txt
+Итоговый технический паспорт проекта: структура, назначение файлов, связи,
+сценарии работы, правила, база данных, выполненные требования и запуск.
+
+Dockerfile
+Многоступенчатая сборка. Первый этап собирает проект Maven, второй запускает
+скомпилированные классы и зависимости в Java 17 JRE-образе.
+
+docker-compose.yml
+Описывает два сервиса: PostgreSQL `postgres` и консольное приложение `app`.
+Приложение подключается к БД внутри Docker-сети по адресу `postgres:5432`.
+PostgreSQL доступен с компьютера по `localhost:5433`. Включены healthcheck,
+stdin и tty для интерактивного запуска приложения, а volume сохраняет данные.
+
+run.ps1
+Вспомогательный PowerShell-скрипт запуска Java-приложения через Maven.
+
+database/schema.sql
+Создает таблицы `members` и `training_registrations`, ограничения, индекс,
+пять тестовых участников и десять тестовых записей.
+
+database/setup-local.ps1
+Создает локальную базу `sportclub` и применяет schema.sql для PostgreSQL,
+установленного как Windows-служба.
+
+docs/ER-diagram.md
+ER-диаграмма таблиц и внешней связи между участниками и записями.
+
+Точка входа и интерфейс
+-----------------------
+
+src/main/java/ru/sportclub/Main.java
+Точка входа программы. Создает DatabaseManager, репозитории, сервисы и
+ConsoleApplication, затем запускает метод run(). Бизнес-логика в Main не хранится.
+
+src/main/java/ru/sportclub/ui/ConsoleApplication.java
+Главный консольный интерфейс. Содержит главное меню и подменю участников,
+записей, поиска, фильтрации/сортировки, статистики и экспорта.
+
+Класс читает ввод через Scanner, вызывает сервисы и выводит объекты. Меню
+зациклено, поэтому после операции приложение не завершается. Ошибки ловятся на
+уровне UI и выводятся пользователю без аварийного завершения программы.
+
+Модели предметной области
+-------------------------
+
+src/main/java/ru/sportclub/model/Member.java
+Модель участника: id, ФИО, телефон, email, тип абонемента и активность.
+Поля private, есть конструкторы, методы доступа и toString().
+Вложенный enum MembershipType содержит BASIC, PREMIUM и ANNUAL.
+
+src/main/java/ru/sportclub/model/TrainingRegistration.java
+Модель записи на тренировку: id, memberId, имя участника, название тренировки,
+тренер, дата, время, длительность, статус, категория и дата создания.
+Вложенный enum RegistrationStatus содержит PLANNED, CONFIRMED, COMPLETED и
+CANCELLED.
+
+Репозитории
+-----------
+
+src/main/java/ru/sportclub/repository/CrudRepository.java
+Обобщенный интерфейс CRUD: save, findAll, findById, update и deleteById.
+Через него MemberService работает с репозиторием по абстракции, что показывает
+интерфейс и полиморфизм.
+
+src/main/java/ru/sportclub/repository/MemberRepository.java
+JDBC-реализация CRUD для таблицы members. Использует Connection,
+PreparedStatement, ResultSet и try-with-resources. Также ищет участника по email.
+
+src/main/java/ru/sportclub/repository/TrainingRegistrationRepository.java
+JDBC-реализация CRUD для training_registrations. При чтении соединяет записи с
+members через JOIN, преобразует ResultSet в TrainingRegistration и проверяет,
+занят ли участником конкретный временной слот.
+
+Сервисы
+-------
+
+src/main/java/ru/sportclub/service/MemberService.java
+Сервис участников. Проверяет обязательные поля, email и наличие записи перед
+изменением или удалением. Реализует создание, просмотр, поиск по ID, изменение
+и удаление участников.
+
+src/main/java/ru/sportclub/service/TrainingRegistrationService.java
+Главный сервис предметной области. Реализует CRUD записей, поиск по названию
+тренировки и тренеру, фильтры по статусу и категории, сортировку по дате/времени
+и длительности, а также группировку статистики по статусам.
+
+Здесь находятся бизнес-проверки: существование и активность участника,
+обязательность названия и тренера, допустимая дата, длительность от 30 до 240
+минут, отсутствие конфликта времени, допустимые переходы статусов и запрет
+удаления или изменения завершенных записей.
+
+Исключения
+----------
+
+src/main/java/ru/sportclub/exception/BusinessException.java
+Сигнализирует о нарушении бизнес-правила или некорректном пользовательском вводе.
+
+src/main/java/ru/sportclub/exception/EntityNotFoundException.java
+Используется, когда участник или запись с указанным ID отсутствует.
+
+src/main/java/ru/sportclub/exception/DataAccessException.java
+Оборачивает ошибки JDBC, PostgreSQL и SQL-запросов в исключение приложения.
+
+Утилиты
+-------
+
+src/main/java/ru/sportclub/util/DatabaseManager.java
+Читает SPORTCLUB_DB_URL, SPORTCLUB_DB_USER и SPORTCLUB_DB_PASSWORD и создает
+JDBC Connection через DriverManager. Для локального запуска есть значения по
+умолчанию.
+
+src/main/java/ru/sportclub/util/ExcelExporter.java
+Создает exports/sport-club-data.xlsx через Apache POI. В файле два листа:
+"Участники" и "Записи на тренировки".
+
+4. ЛОГИКА РАБОТЫ ПРОГРАММЫ
+===========================
+
+1. Main создает DatabaseManager.
+2. Main передает DatabaseManager в MemberRepository и
+   TrainingRegistrationRepository.
+3. Main создает MemberService и TrainingRegistrationService.
+4. Main передает сервисы в ConsoleApplication.
+5. ConsoleApplication.run() показывает главное меню и читает команду.
+6. UI передает операцию соответствующему Service.
+7. Service проверяет бизнес-правила и вызывает Repository.
+8. Repository открывает Connection, выполняет параметризованный SQL через
+   PreparedStatement, читает ResultSet и возвращает объект или список объектов.
+9. Результат возвращается через Service в UI и выводится пользователю.
+10. Ошибки преобразуются в собственные исключения и показываются в меню.
+
+Связь объектов при записи на тренировку:
+
+ConsoleApplication
+    -> TrainingRegistrationService
+        -> TrainingRegistrationRepository
+            -> training_registrations
+                -> members через member_id
+
+При создании записи сервис дополнительно обращается к MemberRepository, чтобы
+убедиться, что участник существует и активен.
+
+5. БАЗА ДАННЫХ И СВЯЗИ
+=======================
+
+Таблица members:
+
+- id - PRIMARY KEY;
+- full_name - обязательное ФИО;
+- phone - обязательный уникальный телефон;
+- email - обязательный уникальный email;
+- membership_type - BASIC, PREMIUM или ANNUAL;
+- active - признак активности участника.
+
+Таблица training_registrations:
+
+- id - PRIMARY KEY;
+- member_id - обязательный FOREIGN KEY на members.id;
+- training_name - название тренировки;
+- trainer_name - тренер;
+- training_date и start_time - дата и время;
+- duration_minutes - от 30 до 240 минут;
+- status - PLANNED, CONFIRMED, COMPLETED или CANCELLED;
+- category - категория тренировки;
+- created_at - время создания записи.
+
+Связь:
+
+training_registrations.member_id -> members.id
+
+В базе также есть составной уникальный индекс на member_id, training_date и
+start_time. Он запрещает записать одного участника дважды на один временной слот.
+Внешний ключ использует ON DELETE RESTRICT, поэтому участника с записями нельзя
+удалить без предварительного удаления связанных записей.
+
+6. БИЗНЕС-ПРАВИЛА
+==================
+
+1. Запись создается только для существующего участника.
+2. Неактивного участника нельзя записать на тренировку.
+3. ФИО, телефон, email, название тренировки и тренер обязательны.
+4. Email участника должен содержать символ @.
+5. Дата тренировки не может быть в прошлом.
+6. Длительность тренировки должна быть от 30 до 240 минут.
+7. Нельзя создать две записи одного участника на одну дату и время.
+8. Новую запись нельзя сразу создать со статусом COMPLETED.
+9. Завершить можно только запись со статусом CONFIRMED.
+10. Завершенную или отмененную запись нельзя редактировать.
+11. Завершенную запись нельзя удалить.
+12. Ввод ID и числовых значений проверяется до обращения к базе.
+
+7. ФУНКЦИИ И МЕНЮ
+==================
 
 Главное меню:
 
@@ -136,233 +296,139 @@ powershell -ExecutionPolicy Bypass -File .\run.ps1
 7. Вывести таблицы базы данных
 0. Выход
 
-Для проверки участников:
+CRUD участников:
 
-1 -> 2
+- добавить участника;
+- вывести всех участников;
+- найти участника по ID;
+- изменить активность;
+- удалить участника.
 
-Появится список участников. Затем в меню участников ввести 0, чтобы вернуться
-в главное меню.
+CRUD записей на тренировки:
 
-Для проверки записей:
+- создать запись;
+- вывести все записи;
+- найти запись по ID;
+- изменить запись;
+- удалить запись.
 
-2 -> 2
+Поиск выполняется двумя способами: по названию тренировки и по тренеру.
+Фильтрация выполняется по статусу и категории.
+Сортировка выполняется по дате и времени, а также по длительности по убыванию.
 
-Должны появиться 10 тестовых записей.
+Статистика выводит минимум пять показателей: число участников, число активных
+участников, общее число записей и количество записей по четырем статусам.
 
-Для проверки поиска:
-
-3 -> 1
-
-Ввести, например: Йога
-
-Для проверки статистики:
-
-5
-
-Для проверки Excel:
-
-6
-
-Файл будет создан здесь:
-
-exports\sport-club-data.xlsx
-
-5. ЧТО НУЖНО СДЕЛАТЬ ДЛЯ DOCKER
+8. СООТВЕТСТВИЕ ТРЕБОВАНИЯМ КР1
 ================================
 
-1) Включить аппаратную виртуализацию в BIOS/UEFI.
+[ВЫПОЛНЕНО] Java-проект на Java 17 и файл pom.xml.
+[ВЫПОЛНЕНО] Интерактивное циклическое консольное меню.
+[ВЫПОЛНЕНО] PostgreSQL и подключение через JDBC.
+[ВЫПОЛНЕНО] Две связанные сущности и две связанные таблицы.
+[ВЫПОЛНЕНО] Полный CRUD основной сущности.
+[ВЫПОЛНЕНО] CRUD связанной сущности Member.
+[ВЫПОЛНЕНО] Два способа поиска.
+[ВЫПОЛНЕНО] Два фильтра.
+[ВЫПОЛНЕНО] Две сортировки.
+[ВЫПОЛНЕНО] Статистика системы с минимум пятью показателями.
+[ВЫПОЛНЕНО] Экспорт основных данных в Excel XLSX.
+[ВЫПОЛНЕНО] Enum предметной области.
+[ВЫПОЛНЕНО] Интерфейс CrudRepository.
+[ВЫПОЛНЕНО] Полиморфизм через CrudRepository<Member>.
+[ВЫПОЛНЕНО] Инкапсуляция, private-поля, конструкторы и методы.
+[ВЫПОЛНЕНО] Коллекции и Stream API.
+[ВЫПОЛНЕНО] Собственные исключения.
+[ВЫПОЛНЕНО] Обработка текста вместо числа и отсутствующего ID.
+[ВЫПОЛНЕНО] Обработка бизнес-ошибок без завершения программы.
+[ВЫПОЛНЕНО] Обработка ошибок PostgreSQL и SQL-запросов.
+[ВЫПОЛНЕНО] PreparedStatement вместо конкатенации SQL.
+[ВЫПОЛНЕНО] ResultSet и try-with-resources.
+[ВЫПОЛНЕНО] PRIMARY KEY, FOREIGN KEY, NOT NULL, UNIQUE и CHECK.
+[ВЫПОЛНЕНО] 5 участников, 10 записей, 4 статуса и несколько категорий.
+[ВЫПОЛНЕНО] SQL-скрипт и ER-диаграмма.
+[ВЫПОЛНЕНО] Dockerfile и docker-compose.yml.
+[ВЫПОЛНЕНО] Инструкция запуска и описание проекта.
 
-Для Intel настройка обычно называется:
+9. ПРОВЕРЕНО
+============
 
-Intel Virtualization Technology
-Intel VT-x
-Virtualization Technology
+- Maven-проект успешно компилируется.
+- Docker Desktop и Docker Engine работают.
+- Docker Compose успешно запускает PostgreSQL.
+- Контейнер sportclub-postgres получает статус Healthy.
+- Java-приложение успешно подключается к PostgreSQL в Docker.
+- Главное меню приложения запускается в интерактивном режиме.
+- Docker-подключение использует postgres:5432 внутри сети.
+- PostgreSQL доступен с компьютера на localhost:5433.
 
-2) Загрузить Windows после сохранения настроек BIOS.
+Остается отдельно проверить ручным запуском пункта меню 6 создание файла
+exports/sport-club-data.xlsx и показать этот файл на защите.
 
-3) Запустить Docker Desktop.
-
-4) Проверить Docker:
-
-docker version
-
-В результате должны отображаться разделы Client и Server.
-
-5) Из C:\sportclub запустить:
-
-docker compose down -v
-docker compose up --build
-
-Docker PostgreSQL работает внутри Docker-сети на postgres:5432.
-С компьютера он доступен на localhost:5433, потому что локальный PostgreSQL
-использует порт 5432.
-
-6. КАК ОБЪЯСНИТЬ ПРЕПОДАВАТЕЛЮ
-================================
-
-Программа хранит данные не в памяти Java, а в PostgreSQL.
-
-ConsoleApplication отвечает за меню и ввод.
-Service-классы содержат бизнес-правила.
-Repository-классы выполняют JDBC-запросы.
-Model-классы описывают предметную область.
-DatabaseManager создает подключения к PostgreSQL.
-ExcelExporter экспортирует данные в XLSX.
-
-Основная связь базы:
-
-training_registrations.member_id -> members.id
-
-Приложение демонстрирует ООП, коллекции, Stream API, enum, интерфейс,
-полиморфизм, исключения, JDBC, PostgreSQL и многослойную архитектуру.
-
-7. КОРОТКАЯ ИНСТРУКЦИЯ ЗАПУСКА
+10. ЗАПУСК ПРОЕКТА ЧЕРЕЗ DOCKER
 ===============================
 
-Вариант A: локальный PostgreSQL без Docker
+В PowerShell из C:\sportclub:
 
-Открыть PowerShell и выполнить:
+    cd C:\sportclub
+    docker compose build app
+    docker compose up -d postgres
+    docker compose run --rm app
 
-cd C:\sportclub
-$env:SPORTCLUB_DB_PASSWORD = "ВАШ_ПАРОЛЬ_POSTGRES"
-powershell -ExecutionPolicy Bypass -File .\database\setup-local.ps1
-& "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
+Эта последовательность запускает PostgreSQL в фоне и Java-приложение в
+интерактивном режиме, поэтому команды меню можно вводить с клавиатуры.
 
-После запуска появится меню спортивного клуба.
+Если образ приложения не менялся, достаточно:
 
-Если Maven уже добавлен в PATH, последнюю команду можно заменить на:
+    cd C:\sportclub
+    docker compose up -d postgres
+    docker compose run --rm app
 
-mvn clean compile exec:java
+Для полной пересборки базы с тестовыми данными:
 
-Вариант B: запуск через Docker
+    docker compose down -v
+    docker compose up -d postgres
+    docker compose run --rm app
 
-Сначала включить виртуализацию в BIOS/UEFI и запустить Docker Desktop.
-Проверить Docker:
+Ключ -v удаляет volume базы, поэтому использовать его нужно только при
+намеренной очистке данных.
 
-docker version
+Для остановки контейнеров:
 
-В выводе должны быть разделы Client и Server.
+    docker compose down
 
-Затем выполнить:
+11. ЛОКАЛЬНЫЙ ЗАПУСК БЕЗ DOCKER
+===============================
 
-cd C:\sportclub
-docker compose down -v
-docker compose up --build
+Если используется PostgreSQL как Windows-служба:
 
-Для остановки контейнеров нажать Ctrl+C или выполнить:
+    cd C:\sportclub
+    $env:SPORTCLUB_DB_PASSWORD = "ПАРОЛЬ_POSTGRES"
+    powershell -ExecutionPolicy Bypass -File .\database\setup-local.ps1
+    mvn clean compile exec:java
 
-docker compose down
+При необходимости можно использовать полный путь к Apache Maven:
 
-Важно: Docker PostgreSQL доступен с компьютера на порту 5433.
-Локальный PostgreSQL использует порт 5432.
+    & "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
 
-8. ПОЛНЫЙ СПИСОК КОМАНД ПО ПОРЯДКУ
-====================================
+12. ЧТО ПОКАЗАТЬ НА ЗАЩИТЕ
+===========================
 
-Локальный запуск после перезагрузки компьютера:
+1. Структуру проекта и файл pom.xml.
+2. Main и создание зависимостей.
+3. Главное меню и циклическую работу программы.
+4. Модели Member и TrainingRegistration.
+5. Enum MembershipType и RegistrationStatus.
+6. Интерфейс CrudRepository и его реализации.
+7. Service-слой и бизнес-правила.
+8. Создание, поиск, изменение и удаление записи.
+9. Ошибку при вводе abc вместо ID.
+10. Поиск, фильтрацию и сортировку.
+11. PostgreSQL, schema.sql и связь member_id -> members.id.
+12. Статистику.
+13. Экспорт XLSX.
+14. Docker Compose и статус контейнера PostgreSQL Healthy.
 
-1) Открыть PowerShell и перейти в проект:
-
-cd C:\sportclub
-
-2) Проверить службу PostgreSQL:
-
-Get-Service -Name postgresql* | Select-Object Name,Status,StartType
-
-Ожидаемый Status: Running.
-
-3) Проверить порт PostgreSQL:
-
-Test-NetConnection localhost -Port 5432 -InformationLevel Quiet
-
-Ожидаемый результат: True.
-
-4) Указать пароль PostgreSQL в текущем окне PowerShell:
-
-$env:SPORTCLUB_DB_PASSWORD = "ВАШ_РЕАЛЬНЫЙ_ПАРОЛЬ_POSTGRES"
-
-5) Создать базу, таблицы и тестовые записи:
-
-powershell -ExecutionPolicy Bypass -File .\database\setup-local.ps1
-
-Ожидаемый результат:
-
-Done. Database sportclub and tables are initialized.
-
-6) Запустить проект через полный путь к Maven:
-
-& "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
-
-Если команда mvn работает в новом PowerShell, можно использовать короткую
-команду:
-
-mvn clean compile exec:java
-
-Альтернативный запуск через готовый PowerShell-скрипт:
-
-powershell -ExecutionPolicy Bypass -File .\run.ps1
-
-7) Проверить меню приложения:
-
-1    открыть меню участников
-2    показать всех участников
-0    вернуться из подменю
-2    открыть записи на тренировки
-2    показать все записи
-0    вернуться из подменю
-5    показать статистику
-6    создать Excel-файл
-0    выйти из приложения
-
-Excel-файл создается по адресу:
-
-exports\sport-club-data.xlsx
-
-Проверка Docker после включения виртуализации и перезагрузки:
-
-1) Проверить WSL:
-
-wsl --status
-wsl --list --verbose
-
-2) Добавить Docker CLI в текущее окно PowerShell, если команда docker не найдена:
-
-$env:Path = "$env:LOCALAPPDATA\Programs\DockerDesktop\resources\bin;$env:Path"
-
-3) Проверить Docker:
-
-docker version
-docker compose version
-
-В docker version должны присутствовать разделы Client и Server.
-
-4) Запустить проект в Docker с чистой базой:
-
-cd C:\sportclub
-docker compose down -v
-docker compose up --build
-
-5) Проверить контейнеры в другом PowerShell:
-
-docker compose ps
-docker ps
-
-6) Остановить контейнеры:
-
-docker compose down
-
-Важно:
-- локальный PostgreSQL использует localhost:5432;
-- Docker PostgreSQL доступен с компьютера на localhost:5433;
-- внутри Docker приложение подключается к postgres:5432;
-- docker compose down -v удаляет Docker volume и базу Docker;
-- для локальной базы команда down -v ничего не делает.
-
-$env:SPORTCLUB_DB_PASSWORD = "ТВОЙ_ПАРОЛЬ_POSTGRES"
-Get-Service -Name postgresql*
-& "$env:USERPROFILE\apache-maven-3.9.11\bin\mvn.cmd" clean compile exec:java
-
-cd C:\sportclub
-docker compose build app
-docker compose up -d postgres
-docker compose run --rm app
+Главная идея проекта: консоль не выполняет SQL напрямую. Она передает запрос
+в Service, Service проверяет правила и обращается к Repository, а Repository
+работает с PostgreSQL через JDBC.
